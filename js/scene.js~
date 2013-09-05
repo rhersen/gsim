@@ -17,7 +17,6 @@ var scene = (function () {
 	var newMesh;
   var workpieceSideLength = 100;
 	var top;
-	var millDiameter = 10;
   var material = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
   var millMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
 
@@ -60,14 +59,14 @@ var scene = (function () {
 			}
   }
 
-	function millFromTo(from, to) {
+	// mill along a straight line
+	function millFromTo(from, to, millDiameter) {
 		console.log("from=", from);
 		console.log("to=", to);
 		var workpieceBSP = new ThreeBSP(workpiece);
 
 		var mr = millDiameter / 2.0;
-		var mh = 100;
-		var millMesh = makeMillBodyMesh(from, to, mr, mh, millMaterial);
+		var millMesh = makeMillBodyMesh(from, to, mr, top, millMaterial);
 		if (false) {
 			scene.remove(workpiece);
 			scene.add(millMesh);
@@ -79,7 +78,9 @@ var scene = (function () {
 		}	
 	}
 
-	function makeMillBodyMesh(from, to, r, qwe, material) {
+	// returns a mesh for the volume covered by a 
+	// mill of radius r moving between from and to
+	function makeMillBodyMesh(from, to, r, top, material) {
 		if (top > from.y) {
 			var h = top - from.y;
 			var dy = from.y + h / 2.0;
@@ -89,6 +90,9 @@ var scene = (function () {
 				var mesh = new THREE.Mesh(geometry, material);
 				return mesh;
 			} else {
+				if (from.y != to.y) {
+					throw "ERROR: tool path changes in all axes - only change in x/z or y is supported, not both";
+				}
 				var lidPath = getMillBodyLidPath(from, to, r);
 				var geometry = lidPath.makeGeometry();
 				var extrusionSettings = {
@@ -105,6 +109,8 @@ var scene = (function () {
 		}
 	}
 
+	// return 2D shape for a mill of radius r 
+	// going between points from and to
 	function getMillBodyLidPath(from, to, r) {
 		var from2 = new THREE.Vector2(from.x, from.z);
 		var to2 = new THREE.Vector2(to.x, to.z);
@@ -154,19 +160,20 @@ var scene = (function () {
 				for (var i = 0; i < n; i++) {
 					millFromTo(
 						new THREE.Vector3(Math.cos(vv) * r1, -100, Math.sin(vv) * r1), 
-						new THREE.Vector3(Math.cos(vv) * r2, -100, Math.sin(vv) * r2));
+						new THREE.Vector3(Math.cos(vv) * r2, -100, Math.sin(vv) * r2),
+						10);
 					vv += vvstep;
 				}
-        changed = true;
+	      changed = true;
       },
 
       mill3AndPaint: function() {
-        millFromTo(new THREE.Vector3(0, -1, 0), new THREE.Vector3(10, -1, 10));
-//        millFromTo(new THREE.Vector3(10, -100, 10), new THREE.Vector3(10, -100, 10));
-//        millFromTo(new THREE.Vector3(-10, -100, 10), new THREE.Vector3(-10, -100, 10));
-//        millFromTo(new THREE.Vector3(10, -100, -10), new THREE.Vector3(10, -100, -10));
-//        millFromTo(new THREE.Vector3(-10, -100, -10), new THREE.Vector3(-10, -100, -10));
-			changed = true;
+        millFromTo(new THREE.Vector3(0, -1, 0), new THREE.Vector3(10, -1, 10), 10);
+//        millFromTo(new THREE.Vector3(10, -100, 10), new THREE.Vector3(10, -100, 10), 10);
+//        millFromTo(new THREE.Vector3(-10, -100, 10), new THREE.Vector3(-10, -100, 10), 10);
+//        millFromTo(new THREE.Vector3(10, -100, -10), new THREE.Vector3(10, -100, -10), 10);
+//        millFromTo(new THREE.Vector3(-10, -100, -10), new THREE.Vector3(-10, -100, -10), 10);
+				changed = true;
       }
   }
 })();
