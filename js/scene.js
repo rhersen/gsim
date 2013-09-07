@@ -1,8 +1,8 @@
 var scene = (function () {
 
 	// set the scene size
-  var WIDTH = 400;
-  var HEIGHT = 600;
+  var WIDTH = 200;
+  var HEIGHT = 200;
 
   var ASPECT = WIDTH / HEIGHT;
 
@@ -41,13 +41,12 @@ var scene = (function () {
 		workpiece.geometry.computeBoundingBox();
 		top = 0.0;
 
-		controller = new THREE.OrbitControls(camera);
+		controller = new THREE.OrbitControls(camera, document.getElementById("container"));
 		controller.addEventListener("change", function(src, type) {changed = true;});
 		scene.add(controller);
 
     renderer.setSize(WIDTH, HEIGHT);
-    var $container = $('#container');
-    $container.append(renderer.domElement);
+		document.getElementById("container").appendChild(renderer.domElement);
   }
 
   function paint() {
@@ -147,10 +146,11 @@ var scene = (function () {
           paint();
       },
 
+			// mills the cgode using the specified mill
+			millGCode: function(gcode, millDiameter) {
+			},
+
       mill1AndPaint: function() {
-        millFromTo(new THREE.Vector3(-10, 0, 0), 
-					new THREE.Vector3(10, 0, 0));
-        changed = true;
       },
 
       mill2AndPaint: function() {

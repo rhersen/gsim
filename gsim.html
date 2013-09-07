@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html ng-app>
-<head>
-    <title>g-code simulator</title>
-    <link rel="stylesheet" href="css/normalize.css"/>
-    <link rel="stylesheet" href="css/foundation.min.css"/>
-</head>
-<body ng-controller="ThreeJsCtrl">
-<div class="row">
-    <div class="small-12 columns">
-        <h1>g-code simulator</h1>
-    </div>
-</div>
-<div class="row">
-    <div class="small-6 columns">
-        <div class="row">
-            <input type="button" value="Mill 1" ng-click="Mill1()"/>
-        </div>
-        <div class="row">
-            <input type="button" value="Mill 2" ng-click="Mill2()"/>
-        </div>
-        <div class="row">
-            <input type="button" value="Mill 3" ng-click="Mill3()"/>
-        </div>
-    </div>
-    <div class="small-6 columns">
-        <div id="container">
-        </div>
-    </div>
-</div>
-<script src="js/jquery.min.js"></script>
-<script src="js/angular.min.js"></script>
-<script src="js/three-r58.js"></script>
-<script src="js/OrbitControls.js"></script>
-<script src="js/ThreeCSG.js"></script>
-<script src="js/scene.js"></script>
-<script src="js/controller.js"></script>
-<script type="application/javascript">
-    scene.init();
-</script>
-</body>
+	<head>
+		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+		<script src="js/angular.js"></script>
+		<script src="js/three-r58.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script src="js/ThreeCSG.js"></script>
+		<script src="js/scene.js"></script>
+		<script src="js/controller.js"></script>
+	  <title>g-code simulator</title>
+		<style>
+			.rows {display: inline-block;}
+			.cols {display: block;}
+			#container {display: inline; width: 100%;}
+			h1.top {margin-top: 0px; margin-bottom: 0px;}
+		</style>
+	</head>
+	<body ng-controller="ThreeJsCtrl">
+		<div class="rows">
+	    <h1 class="top">g-code simulator</h1>
+			<div class="cols">
+				<div class="rows">
+					<div class="cols">
+						<input type="button" value="Run" ng-click="Mill1()"/>
+					</div>
+					<textarea ng-model="gcode" rows="10" cols="30"></textarea>
+					<div class="cols">
+						<input type="button" value="test 2" ng-click="Mill2()"/>
+						<input type="button" value="test 3" ng-click="Mill3()"/>
+					</div>
+				</div>
+				<div id="container">
+				</div>
+			</div>
+		</div>
+		<script type="application/javascript">
+				scene.init();
+		</script>
+	</body>
 </html>

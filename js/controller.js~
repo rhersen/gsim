@@ -1,6 +1,6 @@
 function ThreeJsCtrl($scope) {
 
-	$scope.gcode = "g0 x10 y10 z10\ng0 z-10\ng0 x30\n";
+	$scope.gcode = "g0 x10 y10 z10\ng0 z-10&#10;g0 x30&#10;";
 
 	$scope.Mill1 = function() {
 		  scene.mill1AndPaint();
