@@ -1,10 +1,5 @@
 var scene = (function () {
 
-	// set the scene size
-  var WIDTH = 200;
-  var HEIGHT = 200;
-
-  var ASPECT = WIDTH / HEIGHT;
 
 	// create a WebGL renderer
 	// and a scene
@@ -15,13 +10,20 @@ var scene = (function () {
 	var controller;
   var workpiece;
 	var newMesh;
-  var workpieceSideLength = 100;
+  var workpieceWidth = 300, workpieceHeight = 100, workpieceDepth = 200;
 	var top;
   var material = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
   var millMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
 
   function setup() {
-    var VIEW_ANGLE = 45;
+		var el = document.getElementById("draw3d");
+		var leftEl = document.getElementById("left");
+
+  var WIDTH = el.clientWidth - leftEl.clientWidth;
+  var HEIGHT = 400;
+
+  var ASPECT = WIDTH / HEIGHT;
+   var VIEW_ANGLE = 45;
     var NEAR = 0.1;
     var FAR = 10000;
     camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
@@ -34,19 +36,19 @@ var scene = (function () {
     pointLight.position.z = 130;
     scene.add(pointLight);
 
-		var workpiecegeometry = new THREE.CubeGeometry(workpieceSideLength, workpieceSideLength, workpieceSideLength);
+		var workpiecegeometry = new THREE.CubeGeometry(workpieceWidth, workpieceHeight, workpieceDepth);
     workpiece = new THREE.Mesh(workpiecegeometry, material);
-		workpiecegeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -workpieceSideLength / 2, 0));	// set top of wp at 0
+		workpiecegeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -workpieceHeight / 2, 0));	// set top of wp at 0
     scene.add(workpiece);
 		workpiece.geometry.computeBoundingBox();
 		top = 0.0;
 
-		controller = new THREE.OrbitControls(camera, document.getElementById("container"));
+		controller = new THREE.OrbitControls(camera, document.getElementById("draw3d"));
 		controller.addEventListener("change", function(src, type) {changed = true;});
 		scene.add(controller);
 
     renderer.setSize(WIDTH, HEIGHT);
-		document.getElementById("container").appendChild(renderer.domElement);
+		document.getElementById("draw3d").appendChild(renderer.domElement);
   }
 
   function paint() {
@@ -140,6 +142,10 @@ var scene = (function () {
 		return shape;
 	}
 
+	function trim1 (str) {
+		  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+	}
+
   return {
       init: function () {
           setup();
@@ -148,6 +154,40 @@ var scene = (function () {
 
 			// mills the cgode using the specified mill
 			millGCode: function(gcode, millDiameter) {
+				// parse and execute g code line by line
+				var validStarts = "gxyzijkf";
+				var pos = {x:0, y:0, z:0};
+				var gv = {};
+				var lines = gcode.split('\n');
+				for (var i in lines) {
+					var line = trim1(lines[i]);
+					if (line.length > 0) {
+console.log("line=", line);
+						var parts = line.split(' ');
+						for (var j in parts) {
+							var part = parts[j];
+console.log("  part=", part);
+							var partStart = part.charAt(0);
+							if (validStarts.indexOf(partStart) == -1) {
+								throw "invalid start of part of gcode";
+							}
+							gv[partStart] = (partStart == 'g' ? parseInt(part.substr(1)) : parseFloat(part.substr(1)));
+						}
+console.log("gv=", gv);
+						if (gv.g == 0 || gv.g == 1) {
+							if (!(gv.x && gv.y && gv.z)) {
+								throw "missing x, y or z";
+							}
+							if (gv.g == 1) {
+								millFromTo(
+									new THREE.Vector3(pos.x, pos.z, pos.y),
+									new THREE.Vector3(gv.x, gv.z, gv.y),
+									30);
+							}
+							pos.x = gv.x; pos.y = gv.y; pos.z = gv.z;
+						}
+					}
+				}
 			},
 
       mill1AndPaint: function() {

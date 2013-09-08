@@ -1,9 +1,9 @@
 function ThreeJsCtrl($scope) {
 
-	$scope.gcode = "g0 x10 y10 z10\ng0 z-10\ng0 x30\n";
+	$scope.gcode = "g0 x10 y10 z10\ng0 z-10\ng1 x30\n";
 
 	$scope.Mill1 = function() {
-		  scene.mill1AndPaint();
+		  scene.millGCode($scope.gcode, 20);
 	}
 
 	$scope.Mill2 = function() {

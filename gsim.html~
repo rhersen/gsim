@@ -27,7 +27,7 @@
 				<div class="cols">
 					<input type="button" value="Run" ng-click="Mill1()"/>
 				</div>
-				<textarea ng-model="gcode" rows="10"></textarea>
+				<textarea rows="10"></textarea>
 				<div class="cols">
 					<input type="button" value="test 2" ng-click="Mill2()"/>
 					<input type="button" value="test 3" ng-click="Mill3()"/>
