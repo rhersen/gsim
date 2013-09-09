@@ -146,6 +146,45 @@ var scene = (function () {
 		  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 	}
 
+	function SyntaxError(msg, lineNo) {
+		this.msg = msg;
+		this.lineNo = lineNo;
+	}
+
+	function executeGCode(gcode, millDiameter) {
+		// parse and execute g code line by line
+		var validStarts = "gxyzijkf";
+		var pos = {x:0, y:0, z:0};
+		var gv = {};
+		var lines = gcode.split('\n');
+		for (var i in lines) {
+			var line = trim1(lines[i]);
+			if (line.length > 0) {
+				var parts = line.split(' ');
+				for (var j in parts) {
+					var part = parts[j];
+					var partStart = part.charAt(0);
+					if (validStarts.indexOf(partStart) == -1) {
+						throw new SyntaxError("invalid start of part of gcode", i);
+					}
+					gv[partStart] = (partStart == 'g' ? parseInt(part.substr(1)) : parseFloat(part.substr(1)));
+				}
+				if (gv.g == 0 || gv.g == 1) {
+					if (!(gv.x && gv.y && gv.z)) {
+						throw new SyntaxError("missing x, y or z", i);
+					}
+					if (gv.g == 1) {
+						millFromTo(
+							new THREE.Vector3(pos.x, pos.z, pos.y),
+							new THREE.Vector3(gv.x, gv.z, gv.y),
+							10);
+					}
+					pos.x = gv.x; pos.y = gv.y; pos.z = gv.z;
+				}
+			}
+		}
+	}
+
   return {
       init: function () {
           setup();
@@ -154,40 +193,7 @@ var scene = (function () {
 
 			// mills the cgode using the specified mill
 			millGCode: function(gcode, millDiameter) {
-				// parse and execute g code line by line
-				var validStarts = "gxyzijkf";
-				var pos = {x:0, y:0, z:0};
-				var gv = {};
-				var lines = gcode.split('\n');
-				for (var i in lines) {
-					var line = trim1(lines[i]);
-					if (line.length > 0) {
-console.log("line=", line);
-						var parts = line.split(' ');
-						for (var j in parts) {
-							var part = parts[j];
-console.log("  part=", part);
-							var partStart = part.charAt(0);
-							if (validStarts.indexOf(partStart) == -1) {
-								throw "invalid start of part of gcode";
-							}
-							gv[partStart] = (partStart == 'g' ? parseInt(part.substr(1)) : parseFloat(part.substr(1)));
-						}
-console.log("gv=", gv);
-						if (gv.g == 0 || gv.g == 1) {
-							if (!(gv.x && gv.y && gv.z)) {
-								throw "missing x, y or z";
-							}
-							if (gv.g == 1) {
-								millFromTo(
-									new THREE.Vector3(pos.x, pos.z, pos.y),
-									new THREE.Vector3(gv.x, gv.z, gv.y),
-									10);
-							}
-							pos.x = gv.x; pos.y = gv.y; pos.z = gv.z;
-						}
-					}
-				}
+				executeGCode(gcode, millDiameter);
 			},
 
       mill1AndPaint: function() {
