@@ -37,11 +37,12 @@ var scene = (function () {
     scene.add(pointLight);
 
 		var workpiecegeometry = new THREE.CubeGeometry(workpieceWidth, workpieceHeight, workpieceDepth);
-    workpiece = new THREE.Mesh(workpiecegeometry, material);
+    initialWorkpiece = new THREE.Mesh(workpiecegeometry, material);
 		workpiecegeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -workpieceHeight / 2, 0));	// set top of wp at 0
-    scene.add(workpiece);
-		workpiece.geometry.computeBoundingBox();
+		initialWorkpiece.geometry.computeBoundingBox();
 		top = 0.0;
+		workpiece = initialWorkpiece;
+    scene.add(workpiece);
 
 		controller = new THREE.OrbitControls(camera, document.getElementById("draw3d"));
 		controller.addEventListener("change", function(src, type) {changed = true;});
@@ -50,6 +51,12 @@ var scene = (function () {
     renderer.setSize(WIDTH, HEIGHT);
 		document.getElementById("draw3d").appendChild(renderer.domElement);
   }
+
+	function reset() {
+		scene.remove(workpiece);
+		workpiece = initialWorkpiece;
+		scene.add(workpiece);
+	}
 
   function paint() {
 			requestAnimationFrame(paint);
@@ -146,12 +153,8 @@ var scene = (function () {
 		  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 	}
 
-	function SyntaxError(msg, lineNo) {
-		this.msg = msg;
-		this.lineNo = lineNo;
-	}
-
 	function executeGCode(gcode, millDiameter) {
+		reset();
 		// parse and execute g code line by line
 		var validStarts = "gxyzijkf";
 		var pos = {x:0, y:0, z:0};
@@ -165,7 +168,7 @@ var scene = (function () {
 					var part = parts[j];
 					var partStart = part.charAt(0);
 					if (validStarts.indexOf(partStart) == -1) {
-						throw new SyntaxError("invalid start of part of gcode", i);
+						throw new SyntaxError("invalid g-code", i);
 					}
 					gv[partStart] = (partStart == 'g' ? parseInt(part.substr(1)) : parseFloat(part.substr(1)));
 				}
@@ -177,7 +180,7 @@ var scene = (function () {
 						millFromTo(
 							new THREE.Vector3(pos.x, pos.z, pos.y),
 							new THREE.Vector3(gv.x, gv.z, gv.y),
-							10);
+							millDiameter);
 					}
 					pos.x = gv.x; pos.y = gv.y; pos.z = gv.z;
 				}

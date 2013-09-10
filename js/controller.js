@@ -6,10 +6,19 @@ function ThreeJsCtrl($scope) {
 
 	$scope.Mill1 = function() {
 		try {
-		 scene.millGCode($scope.gcode, 20);
+			$scope.errorMessage = "";
+			var d = parseFloat($scope.millDiameter);
+			if (isNaN(d)) {
+				throw "invalid mill diameter";
+			}
+		 	scene.millGCode($scope.gcode, d);
 		} catch(err) {
-  		$scope.errorMessage = err.msg;
-			selectTextareaLine(document.getElementById('gcodeTextArea'), err.lineNo);
+			if (err instanceof SyntaxError) {
+  			$scope.errorMessage = err.message;
+				selectTextareaLine(document.getElementById('gcodeTextArea'), err.lineNo);
+			} else {
+  			$scope.errorMessage = err;
+			}
   	}
 
 	}

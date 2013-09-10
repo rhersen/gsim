@@ -6,10 +6,19 @@ function ThreeJsCtrl($scope) {
 
 	$scope.Mill1 = function() {
 		try {
-		 scene.millGCode($scope.gcode, 20);
+			$scope.errorMessage = "";
+			var d = parseFloat($scope.millDiameter);
+			if (isNaN(d)) {
+				throw "invalid mill diameter";
+			}
+		 	scene.millGCode($scope.gcode, d);
 		} catch(err) {
-  		$scope.errorMessage = err.msg;
-			selectTextareaLine(document.getElementById('gcodeTextArea'), err.lineNo);
+			if (err instanceof SyntaxError) {
+  			$scope.errorMessage = err.msg;
+				selectTextareaLine(document.getElementById('gcodeTextArea'), err.lineNo);
+			} else {
+  			$scope.errorMessage = err;
+			}
   	}
 
 	}
@@ -23,7 +32,6 @@ function ThreeJsCtrl($scope) {
 	}
     
 	function selectTextareaLine(tarea,lineNum) {
-		  lineNum--; // array starts at 0
 		  var lines = tarea.value.split("\n");
 
 		  // calculate start/end
