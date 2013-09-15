@@ -90,9 +90,10 @@ var scene = (function () {
 	// returns a mesh for the volume covered by a 
 	// mill of radius r moving between from and to
 	function makeMillBodyMesh(from, to, r, top, material) {
-		if (top > from.y) {
-			var h = top - from.y;
-			var dy = from.y + h / 2.0;
+		ymin = Math.min(from.y, to.y);
+		if (top > ymin) {
+			var h = top - ymin;
+			var dy = ymin + h / 2.0;
 			if (from.x == to.x && from.z == to.z) {
 				var geometry = new THREE.CylinderGeometry(r, r, h, 12);
 				geometry.applyMatrix(new THREE.Matrix4().makeTranslation(from.x, dy, from.z));	
@@ -167,25 +168,63 @@ var scene = (function () {
 				for (var j in parts) {
 					var part = parts[j];
 					var partStart = part.charAt(0);
+					var partRest = part.substr(1);
 					if (validStarts.indexOf(partStart) == -1) {
 						throw new SyntaxError("invalid g-code", i);
 					}
-					gv[partStart] = (partStart == 'g' ? parseInt(part.substr(1)) : parseFloat(part.substr(1)));
+					gv[partStart] = (partStart == 'g' ? parseInt(partRest) : parseFloat(partRest));
 				}
 				if (gv.g == 0 || gv.g == 1) {
-					if (!(gv.x && gv.y && gv.z)) {
+					if (gv.x == undefined || gv.y == undefined || gv.z == undefined) {
 						throw new SyntaxError("missing x, y or z", i);
 					}
 					if (gv.g == 1) {
-						millFromTo(
-							new THREE.Vector3(pos.x, pos.z, pos.y),
-							new THREE.Vector3(gv.x, gv.z, gv.y),
-							millDiameter);
+						millFromTo(new THREE.Vector3(pos.x, pos.z, pos.y), new THREE.Vector3(gv.x, gv.z, gv.y),	millDiameter);
 					}
 					pos.x = gv.x; pos.y = gv.y; pos.z = gv.z;
 				}
 			}
 		}
+	}
+
+	function selectTextareaLine(tarea,lineNum) {
+		  var lines = tarea.value.split("\n");
+
+		  // calculate start/end
+		  var startPos = 0, endPos = tarea.value.length;
+		  for(var x = 0; x < lines.length; x++) {
+		      if(x == lineNum) {
+		          break;
+		      }
+		      startPos += (lines[x].length+1);
+
+		  }
+
+		  var endPos = lines[lineNum].length+startPos;
+
+		  // do selection
+		  // Chrome / Firefox
+
+		  if(typeof(tarea.selectionStart) != "undefined") {
+		      tarea.focus();
+		      tarea.selectionStart = startPos;
+		      tarea.selectionEnd = endPos;
+		      return true;
+		  }
+
+		  // IE
+		  if (document.selection && document.selection.createRange) {
+		      tarea.focus();
+		      tarea.select();
+		      var range = document.selection.createRange();
+		      range.collapse(true);
+		      range.moveEnd("character", endPos);
+		      range.moveStart("character", startPos);
+		      range.select();
+		      return true;
+		  }
+
+		  return false;
 	}
 
   return {
@@ -197,6 +236,10 @@ var scene = (function () {
 			// mills the cgode using the specified mill
 			millGCode: function(gcode, millDiameter) {
 				executeGCode(gcode, millDiameter);
+			},
+
+			selectGCodeLine: function(lineNo) {
+				selectTextareaLine(document.getElementById('gcodeTextArea'), lineNo);
 			},
 
       mill1AndPaint: function() {
