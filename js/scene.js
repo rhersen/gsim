@@ -19,7 +19,7 @@ var scene = (function () {
 		var el = document.getElementById("draw3d");
 		var leftEl = document.getElementById("left");
 
-  var WIDTH = el.clientWidth - leftEl.clientWidth;
+  var WIDTH = el.clientWidth - leftEl.clientWidth - 10;
   var HEIGHT = 400;
 
   var ASPECT = WIDTH / HEIGHT;
