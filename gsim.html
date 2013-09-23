@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html ng-app>
 	<head>
-		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+	  <title>g-code simulator</title>
+		<script src="js/jquery-1.9.1.js"></script>
+		<script src="js/jquery-ui.js"></script>
 		<script src="js/angular.js"></script>
 		<script src="js/three-r58.js"></script>
 		<script src="js/OrbitControls.js"></script>
@@ -9,25 +11,54 @@
 		<script src="js/common.js"></script>
 		<script src="js/scene.js"></script>
 		<script src="js/controller.js"></script>
-	  <title>g-code simulator</title>
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+		<script>
+			$(document).ready(function() {
+				scene.init();
+
+				function canvasResize() {
+					var container = $('#container');
+					var left = $('#left');
+					var content = $('#content');
+					console.log("left.width()=",left.width(),"left.innerWidth()=",left.innerWidth(),"left.outerWidth()=",left.outerWidth());
+					$('#canvas').width(container.width() - left.outerWidth(true) - 24);
+					$('#canvas').height($(window).height() - 44);
+					$('#left').height($(window).height() - 54);
+					scene.setSizes();
+				}
+
+				canvasResize();
+
+				$(window).bind("resize", function(){
+					canvasResize();
+				});
+
+				$(function () {
+						$("#left").resizable({
+								handles: 'e',
+								minWidth: '50',
+								maxWidth: '350',
+								resize: function() {
+								    canvasResize();
+								}
+						});
+				});
+			});
+		</script>
 		<style>
-			div.container {width:100%; margin:0px; border:1px solid gray; line-height:150%;}
-			div.header,div.footer {padding:0.5em; color:white; background-color:gray; clear:left;}
-			h1.header {padding:0; margin:0;}
-			div.left {float:left; margin:0; padding:1em;}
-			div.content {margin-left:190px; border-left:1px solid gray; padding:1em;}
-			x.rows {display:block;}
-			div canvas {width: auto;}
-			textarea {width: 150px; height: 280px;}
+			body { background-color: #a0e0a0;}
+			div.container {width:100%; background-color: #a0e0a0;}
+			div.left {float:left; width: 20em; height: 100%; margin-right:10px; padding:1em; background-color: #c0ffc0;}
+			div.content {display: inline-block; padding:10px; margin-left:0px; padding-bottom:5px; background-color: #c0ffc0;}
 			input.diameter {width: 30px; text-align: right;}
-			.border {margin-bottom:20px;}
+			div, canvas {zborder:1px solid gray;}
+			textarea {width:100%; resize: none; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;}
 		</style>
 	</head>
 	<body ng-controller="ThreeJsCtrl">
-		<div class="container">
-	    <div class="header"><h1 class="header">g-code simulator</h1></div>
-			<div id="left" class="left">
-				<div class="border">
+		<div id="container" class="container">
+			<div id="left" class="left bg2">
+				<div>
 					Mill Diameter:
 					<input class="diameter" type="text" ng-model="millDiameter"/>
 				</div>
@@ -39,11 +70,10 @@
 					{{errorMessage}}
 				</div>
 			</div>
-			<div id="draw3d">
+			<div id="content" class="content">
+				<canvas id="canvas" class="" width="500" height="100"/>
 			</div>
 		</div>
-		<script type="application/javascript">
-				window.onload = function(e){scene.init();};
-		</script>
 	</body>
 </html>
+

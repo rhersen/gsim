@@ -3,7 +3,7 @@ var scene = (function () {
 
 	// create a WebGL renderer
 	// and a scene
-  var renderer = new THREE.WebGLRenderer({antialias: true});
+  var renderer;
   var scene = new THREE.Scene();
 
 	var changed = false;
@@ -14,19 +14,19 @@ var scene = (function () {
 	var top;
   var material = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
   var millMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
+	var canvasEl;
 
   function setup() {
-		var el = document.getElementById("draw3d");
 		var leftEl = document.getElementById("left");
+		var contentEl = document.getElementById("content");
+		canvasEl = document.getElementById("canvas");
 
-  var WIDTH = el.clientWidth - leftEl.clientWidth - 10;
-  var HEIGHT = 400;
+		renderer = new THREE.WebGLRenderer({canvas: canvasEl, antialias: true})
 
-  var ASPECT = WIDTH / HEIGHT;
-   var VIEW_ANGLE = 45;
+ 		var VIEW_ANGLE = 45;
     var NEAR = 0.1;
     var FAR = 10000;
-    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+    camera = new THREE.PerspectiveCamera(VIEW_ANGLE, 1.0, NEAR, FAR);
     camera.position.set(0, 200, 250);
     scene.add(camera);
 
@@ -44,13 +44,22 @@ var scene = (function () {
 		workpiece = initialWorkpiece;
     scene.add(workpiece);
 
-		controller = new THREE.OrbitControls(camera, document.getElementById("draw3d"));
+		controller = new THREE.OrbitControls(camera, contentEl);
 		controller.addEventListener("change", function(src, type) {changed = true;});
 		scene.add(controller);
 
-    renderer.setSize(WIDTH, HEIGHT);
-		document.getElementById("draw3d").appendChild(renderer.domElement);
+    canvasSizeChanged();
+		contentEl.appendChild(renderer.domElement);
   }
+
+	// call this when canvas size have changed
+	function canvasSizeChanged() {
+		var w = canvasEl.clientWidth, h = canvasEl.clientHeight;
+		renderer.setSize(w, h);
+		camera.aspect = w / h;
+		camera.updateProjectionMatrix();
+		changed = true;
+	}
 
 	function reset() {
 		scene.remove(workpiece);
@@ -232,6 +241,10 @@ var scene = (function () {
           setup();
           paint();
       },
+
+			setSizes: function() {
+				canvasSizeChanged();
+			},
 
 			// mills the cgode using the specified mill
 			millGCode: function(gcode, millDiameter) {
