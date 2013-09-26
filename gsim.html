@@ -17,13 +17,14 @@
 				scene.init();
 
 				function canvasResize() {
+//return;
 					var container = $('#container');
 					var left = $('#left');
 					var content = $('#content');
 					console.log("left.width()=",left.width(),"left.innerWidth()=",left.innerWidth(),"left.outerWidth()=",left.outerWidth());
 					$('#canvas').width(container.width() - left.outerWidth(true) - 24);
-					$('#canvas').height($(window).height() - 44);
-					$('#left').height($(window).height() - 54);
+					$('#canvas').height($(window).height() - 24);
+//					$('#left').height($(window).height() - 54);
 					scene.setSizes();
 				}
 
@@ -46,19 +47,27 @@
 			});
 		</script>
 		<style>
-			body { background-color: #a0e0a0;}
-			div.container {width:100%; background-color: #a0e0a0;}
-			div.left {float:left; width: 20em; height: 100%; margin-right:10px; padding:1em; background-color: #c0ffc0;}
-			div.content {display: inline-block; padding:10px; margin-left:0px; padding-bottom:5px; background-color: #c0ffc0;}
-			input.diameter {width: 30px; text-align: right;}
+
+			body {
+				display: -moz-box; display: -webkit-box; 
+				-webkit-flex-direction: row; flex-direction: row; display:flex;       
+				background-color: #a0e0a0;}
+
+			div.left {display: -moz-box; -moz-box-orient: vertical; flex-direction: column;
+				width: 20em; margin-right:10px; padding:1em; background-color: #c0ffc0;}
+			.diameter-part {display:flex; flex-direction: row; align-items: center;}
+			input.diameter {width: 30px; text-align: right; flex: 1; margin-left: 0.5em;}
+			textarea {-moz-box-flex: 1; -webkit-box-flex: 1; flex: 1; 
+				width:100%; resize: none; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;}
+
+			div.content {flex:1; flex-flow: column; padding:2px; margin-left:0px; padding-bottom:5px; background-color: #c0ffc0;}
 			div, canvas {zborder:1px solid gray;}
-			textarea {width:100%; resize: none; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;}
+			canvas {display:flex; }
 		</style>
 	</head>
-	<body ng-controller="ThreeJsCtrl">
-		<div id="container" class="container">
+	<body ng-controller="ThreeJsCtrl" id="container" class="container">
 			<div id="left" class="left bg2">
-				<div>
+				<div class="diameter-part">
 					Mill Diameter:
 					<input class="diameter" type="text" ng-model="millDiameter"/>
 				</div>
@@ -73,7 +82,6 @@
 			<div id="content" class="content">
 				<canvas id="canvas" class="" width="500" height="100"/>
 			</div>
-		</div>
 	</body>
 </html>
 
