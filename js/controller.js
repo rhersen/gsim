@@ -1,7 +1,6 @@
 function ThreeJsCtrl($scope) {
-
 	$scope.millDiameter = 10;
-	$scope.gcode = "g0 x10 y10 z10\ng0 z-10\ng1 x30\n";
+	$scope.gcode = "g0 x0 y0 z10\ng1 z-110\nx30\ny30\nx0\ny0";
 	$scope.errorMessage = "";
 
 	$scope.Mill1 = function() {
@@ -22,15 +21,6 @@ function ThreeJsCtrl($scope) {
   	}
 
 	}
-
-	$scope.Mill2 = function() {
-		  scene.mill2AndPaint();
-	}
-
-	$scope.Mill3 = function() {
-		  scene.mill3AndPaint();
-	}
-
 }
 
 

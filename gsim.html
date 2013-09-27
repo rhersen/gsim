@@ -14,10 +14,10 @@
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 		<script>
 			$(document).ready(function() {
-				scene.init();
+				var canvasEl = document.getElementById("canvas");
+				scene.init(canvasEl);
 
 				function canvasResize() {
-//return;
 					var container = $('#container');
 					var left = $('#left');
 					var content = $('#content');
@@ -49,15 +49,15 @@
 		<style>
 
 			body {
-				display: -moz-box; display: -webkit-box; 
-				-webkit-flex-direction: row; flex-direction: row; display:flex;       
+				display:flex;
+				flex-flow: row nowrap;     
 				background-color: #a0e0a0;}
 
-			div.left {display: -moz-box; -moz-box-orient: vertical; flex-direction: column;
+			div.left {
 				width: 20em; margin-right:10px; padding:1em; background-color: #c0ffc0;}
 			.diameter-part {display:flex; flex-direction: row; align-items: center;}
-			input.diameter {width: 30px; text-align: right; flex: 1; margin-left: 0.5em;}
-			textarea {-moz-box-flex: 1; -webkit-box-flex: 1; flex: 1; 
+			input.diameter {text-align: right; flex: 1; margin-left: 0.5em;}
+			textarea {
 				width:100%; resize: none; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;}
 
 			div.content {flex:1; flex-flow: column; padding:2px; margin-left:0px; padding-bottom:5px; background-color: #c0ffc0;}

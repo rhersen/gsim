@@ -1,8 +1,5 @@
 var scene = (function () {
-
-
-	// create a WebGL renderer
-	// and a scene
+	// keeps a WebGL renderer on a canvas
   var renderer;
   var scene = new THREE.Scene();
 
@@ -16,11 +13,10 @@ var scene = (function () {
   var millMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
 	var canvasEl;
 
-  function setup() {
-		var leftEl = document.getElementById("left");
-		var contentEl = document.getElementById("content");
-		canvasEl = document.getElementById("canvas");
-
+	// create the WebGL renderer on the supplied canvas and all needed support
+	// also creates a workpiece to mill into
+  function setup(canvas) {
+		canvasEl = canvas;
 		renderer = new THREE.WebGLRenderer({canvas: canvasEl, antialias: true})
 
  		var VIEW_ANGLE = 45;
@@ -44,12 +40,11 @@ var scene = (function () {
 		workpiece = initialWorkpiece;
     scene.add(workpiece);
 
-		controller = new THREE.OrbitControls(camera, contentEl);
+		controller = new THREE.OrbitControls(camera, canvasEl);
 		controller.addEventListener("change", function(src, type) {changed = true;});
 		scene.add(controller);
 
     canvasSizeChanged();
-		contentEl.appendChild(renderer.domElement);
   }
 
 	// call this when canvas size have changed
@@ -61,12 +56,14 @@ var scene = (function () {
 		changed = true;
 	}
 
+	// restore the original workpiece
 	function reset() {
 		scene.remove(workpiece);
 		workpiece = initialWorkpiece;
 		scene.add(workpiece);
 	}
 
+	// start paintloop
   function paint() {
 			requestAnimationFrame(paint);
 			controller.update();
@@ -84,15 +81,10 @@ var scene = (function () {
 
 		var mr = millDiameter / 2.0;
 		var millMesh = makeMillBodyMesh(from, to, mr, top, millMaterial);
-		if (false) {
-			scene.remove(workpiece);
-			scene.add(millMesh);
-		} else {
-			var newBSP = workpieceBSP.subtract(new ThreeBSP(millMesh));
-			scene.remove(workpiece);
-			workpiece = newBSP.toMesh(material);
-			scene.add(workpiece);
-		}
+		var newBSP = workpieceBSP.subtract(new ThreeBSP(millMesh));
+		scene.remove(workpiece);
+		workpiece = newBSP.toMesh(material);
+		scene.add(workpiece);
 		changed = true;
 	}
 
@@ -163,12 +155,13 @@ var scene = (function () {
 		  return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 	}
 
+	// parse and execute g code line by line
+	// supports only g0 and g1
 	function executeGCode(gcode, millDiameter) {
 		reset();
-		// parse and execute g code line by line
 		var validStarts = "gxyzijkf";
-		var pos = {x:0, y:0, z:0};
-		var gv = {};
+		var prevPos = {x:0, y:0, z:0};
+		var partVal = {};
 		var lines = gcode.split('\n');
 		for (var i in lines) {
 			var line = trim1(lines[i]);
@@ -181,16 +174,20 @@ var scene = (function () {
 					if (validStarts.indexOf(partStart) == -1) {
 						throw new SyntaxError("invalid g-code", i);
 					}
-					gv[partStart] = (partStart == 'g' ? parseInt(partRest) : parseFloat(partRest));
+					partVal[partStart] = parseFloat(partRest);
 				}
-				if (gv.g == 0 || gv.g == 1) {
-					if (gv.x == undefined || gv.y == undefined || gv.z == undefined) {
+				if (partVal.g == 0 || partVal.g == 1) {
+					if (partVal.x == undefined || partVal.y == undefined || partVal.z == undefined) {
 						throw new SyntaxError("missing x, y or z", i);
 					}
-					if (gv.g == 1) {
-						millFromTo(new THREE.Vector3(pos.x, pos.z, pos.y), new THREE.Vector3(gv.x, gv.z, gv.y),	millDiameter);
+					if (partVal.g == 1) {
+						millFromTo(
+							new THREE.Vector3(prevPos.x, prevPos.z, prevPos.y), 
+							new THREE.Vector3(partVal.x, partVal.z, partVal.y),	millDiameter);
 					}
-					pos.x = gv.x; pos.y = gv.y; pos.z = gv.z;
+					prevPos.x = partVal.x; 
+					prevPos.y = partVal.y; 
+					prevPos.z = partVal.z;
 				}
 			}
 		}
@@ -237,8 +234,8 @@ var scene = (function () {
 	}
 
   return {
-      init: function () {
-          setup();
+      init: function (canvasEl) {
+          setup(canvasEl);
           paint();
       },
 
@@ -254,30 +251,5 @@ var scene = (function () {
 			selectGCodeLine: function(lineNo) {
 				selectTextareaLine(document.getElementById('gcodeTextArea'), lineNo);
 			},
-
-      mill1AndPaint: function() {
-      },
-
-      mill2AndPaint: function() {
-				var r1 = 25.0, r2 = 35.0;
-				var n = 12;
-				var vv = 0.0;
-				var vvstep = (2.0 * Math.PI) / n;
-				for (var i = 0; i < n; i++) {
-					millFromTo(
-						new THREE.Vector3(Math.cos(vv) * r1, -100, Math.sin(vv) * r1), 
-						new THREE.Vector3(Math.cos(vv) * r2, -100, Math.sin(vv) * r2),
-						10);
-					vv += vvstep;
-				}
-      },
-
-      mill3AndPaint: function() {
-        millFromTo(new THREE.Vector3(0, -1, 0), new THREE.Vector3(10, -1, 10), 10);
-//        millFromTo(new THREE.Vector3(10, -100, 10), new THREE.Vector3(10, -100, 10), 10);
-//        millFromTo(new THREE.Vector3(-10, -100, 10), new THREE.Vector3(-10, -100, 10), 10);
-//        millFromTo(new THREE.Vector3(10, -100, -10), new THREE.Vector3(10, -100, -10), 10);
-//        millFromTo(new THREE.Vector3(-10, -100, -10), new THREE.Vector3(-10, -100, -10), 10);
-      }
   }
 })();
