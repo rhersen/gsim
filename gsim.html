@@ -2,68 +2,21 @@
 <html ng-app>
 	<head>
 	  <title>g-code simulator</title>
-		<script src="js/jquery-1.9.1.js"></script>
-		<script src="js/jquery-ui.js"></script>
-		<script src="js/angular.js"></script>
-		<script src="js/three-r58.js"></script>
-		<script src="js/OrbitControls.js"></script>
-		<script src="js/ThreeCSG.js"></script>
-		<script src="js/common.js"></script>
+		<script src="vendor/jquery-1.9.1.js"></script>
+		<script src="vendor/jquery-ui.js"></script>
+		<script src="vendor/angular.js"></script>
+		<script src="vendor/three-r58.js"></script>
+		<script src="vendor/ThreeCSG.js"></script>
+		<script src="vendor/common.js"></script>
+		<script src="vendor/OrbitControls.js"></script>
 		<script src="js/scene.js"></script>
 		<script src="js/controller.js"></script>
+		<script src="js/init.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 		<script>
-			$(document).ready(function() {
-				var canvasEl = document.getElementById("canvas");
-				scene.init(canvasEl);
-
-				function canvasResize() {
-					var container = $('#container');
-					var left = $('#left');
-					var content = $('#content');
-					console.log("left.width()=",left.width(),"left.innerWidth()=",left.innerWidth(),"left.outerWidth()=",left.outerWidth());
-					$('#canvas').width(container.width() - left.outerWidth(true) - 24);
-					$('#canvas').height($(window).height() - 24);
-//					$('#left').height($(window).height() - 54);
-					scene.setSizes();
-				}
-
-				canvasResize();
-
-				$(window).bind("resize", function(){
-					canvasResize();
-				});
-
-				$(function () {
-						$("#left").resizable({
-								handles: 'e',
-								minWidth: '50',
-								maxWidth: '350',
-								resize: function() {
-								    canvasResize();
-								}
-						});
-				});
-			});
+			$(init);
 		</script>
-		<style>
-
-			body {
-				display:flex;
-				flex-flow: row nowrap;     
-				background-color: #a0e0a0;}
-
-			div.left {
-				width: 20em; margin-right:10px; padding:1em; background-color: #c0ffc0;}
-			.diameter-part {display:flex; flex-direction: row; align-items: center;}
-			input.diameter {text-align: right; flex: 1; margin-left: 0.5em;}
-			textarea {
-				width:100%; resize: none; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;}
-
-			div.content {flex:1; flex-flow: column; padding:2px; margin-left:0px; padding-bottom:5px; background-color: #c0ffc0;}
-			div, canvas {zborder:1px solid gray;}
-			canvas {display:flex; }
-		</style>
+        <link href="css/flex.css" rel="stylesheet"/>
 	</head>
 	<body ng-controller="ThreeJsCtrl" id="container" class="container">
 			<div id="left" class="left bg2">
