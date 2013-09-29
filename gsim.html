@@ -2,21 +2,19 @@
 <html ng-app>
 	<head>
 	  <title>g-code simulator</title>
+        <link href="css/flex.css" rel="stylesheet"/>
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 		<script src="vendor/jquery-1.9.1.js"></script>
 		<script src="vendor/jquery-ui.js"></script>
 		<script src="vendor/angular.js"></script>
 		<script src="vendor/three-r58.js"></script>
-		<script src="vendor/ThreeCSG.js"></script>
-		<script src="vendor/common.js"></script>
-		<script src="vendor/OrbitControls.js"></script>
+        <script src="vendor/OrbitControls.js"></script>
+        <script src="vendor/ThreeCSG.js"></script>
+        <script src="vendor/common.js"></script>
 		<script src="js/scene.js"></script>
 		<script src="js/controller.js"></script>
 		<script src="js/init.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
-		<script>
-			$(init);
-		</script>
-        <link href="css/flex.css" rel="stylesheet"/>
+        <script type="text/javascript">$(init);</script>
 	</head>
 	<body ng-controller="ThreeJsCtrl" id="container" class="container">
 			<div id="left" class="left bg2">
