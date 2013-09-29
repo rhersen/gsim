@@ -6,18 +6,18 @@ var scene = (function () {
 	var changed = false;
 	var controller;
   var workpiece;
-	var newMesh;
   var workpieceWidth = 300, workpieceHeight = 100, workpieceDepth = 200;
 	var top;
   var material = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
   var millMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
 	var canvasEl;
+	var camera, initialWorkpiece;
 
 	// create the WebGL renderer on the supplied canvas and all needed support
 	// also creates a workpiece to mill into
   function setup(canvas) {
 		canvasEl = canvas;
-		renderer = new THREE.WebGLRenderer({canvas: canvasEl, antialias: true})
+		renderer = new THREE.WebGLRenderer({canvas: canvasEl, antialias: true});
 
  		var VIEW_ANGLE = 45;
     var NEAR = 0.1;
@@ -41,7 +41,7 @@ var scene = (function () {
     scene.add(workpiece);
 
 		controller = new THREE.OrbitControls(camera, canvasEl);
-		controller.addEventListener("change", function(src, type) {changed = true;});
+		controller.addEventListener("change", function() {changed = true;});
 		scene.add(controller);
 
     canvasSizeChanged();
@@ -91,31 +91,29 @@ var scene = (function () {
 	// returns a mesh for the volume covered by a 
 	// mill of radius r moving between from and to
 	function makeMillBodyMesh(from, to, r, top, material) {
-		ymin = Math.min(from.y, to.y);
+		var ymin = Math.min(from.y, to.y);
 		if (top > ymin) {
 			var h = top - ymin;
 			var dy = ymin + h / 2.0;
 			if (from.x == to.x && from.z == to.z) {
 				var geometry = new THREE.CylinderGeometry(r, r, h, 12);
-				geometry.applyMatrix(new THREE.Matrix4().makeTranslation(from.x, dy, from.z));	
-				var mesh = new THREE.Mesh(geometry, material);
-				return mesh;
+				geometry.applyMatrix(new THREE.Matrix4().makeTranslation(from.x, dy, from.z));
+				return new THREE.Mesh(geometry, material);
 			} else {
 				if (from.y != to.y) {
 					throw "ERROR: tool path changes in all axes - only change in x/z or y is supported, not both";
 				}
 				var lidPath = getMillBodyLidPath(from, to, r);
-				var geometry = lidPath.makeGeometry();
+				lidPath.makeGeometry();
 				var extrusionSettings = {
 					amount: h, 
 					bevelEnabled: false
 				};
 				geometry = new THREE.ExtrudeGeometry(lidPath, extrusionSettings);
 				geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2));
-				geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, top, 0));	
+				geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, top, 0));
 
-				var mesh = new THREE.Mesh(geometry, material);
-				return mesh;
+				return new THREE.Mesh(geometry, material);
 			}
 		}
 	}
@@ -142,7 +140,7 @@ var scene = (function () {
 		shape.lineTo(to2.x - rightr.x, to2.y - rightr.y);
 	  shape.lineTo(from2.x - rightr.x, from2.y - rightr.y);
 		// add half circle lines around from2 to [from2.x + rightr.x, from2.y + rightr.y]
-		var cv = v + Math.PI / 2;
+		cv = v + Math.PI / 2;
 		for (var i = 1; i < vsteps; i++) {
 			cv += vstep;
 			shape.lineTo(from2.x + r * Math.cos(cv), from2.y + r * Math.sin(cv));
@@ -197,7 +195,7 @@ var scene = (function () {
 		  var lines = tarea.value.split("\n");
 
 		  // calculate start/end
-		  var startPos = 0, endPos = tarea.value.length;
+		  var startPos = 0;
 		  for(var x = 0; x < lines.length; x++) {
 		      if(x == lineNum) {
 		          break;
@@ -250,6 +248,6 @@ var scene = (function () {
 
 			selectGCodeLine: function(lineNo) {
 				selectTextareaLine(document.getElementById('gcodeTextArea'), lineNo);
-			},
+			}
   }
 })();
