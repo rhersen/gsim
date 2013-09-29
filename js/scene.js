@@ -75,8 +75,6 @@ var scene = (function () {
 
 	// mill along a straight line
 	function millFromTo(from, to, millDiameter) {
-		console.log("from=", from);
-		console.log("to=", to);
 		var workpieceBSP = new ThreeBSP(workpiece);
 
 		var mr = millDiameter / 2.0;
@@ -84,6 +82,7 @@ var scene = (function () {
 		var newBSP = workpieceBSP.subtract(new ThreeBSP(millMesh));
 		scene.remove(workpiece);
 		workpiece = newBSP.toMesh(material);
+		workpiece.geometry.computeVertexNormals();
 		scene.add(workpiece);
 		changed = true;
 	}
