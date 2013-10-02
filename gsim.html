@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html ng-app>
-	<head>
-	  <title>g-code simulator</title>
-        <link href="css/flex.css" rel="stylesheet"/>
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
-		<script src="vendor/jquery-1.9.1.js"></script>
-		<script src="vendor/jquery-ui.js"></script>
-		<script src="vendor/angular.js"></script>
-		<script src="vendor/three-r58.js"></script>
-        <script src="vendor/OrbitControls.js"></script>
-        <script src="vendor/ThreeCSG.js"></script>
-        <script src="vendor/common.js"></script>
-		<script src="js/scene.js"></script>
-		<script src="js/controller.js"></script>
-		<script src="js/init.js"></script>
-        <script type="text/javascript">$(init);</script>
-	</head>
-	<body ng-controller="ThreeJsCtrl" id="container" class="container">
-			<div id="left" class="left bg2">
-				<div class="diameter-part">
-					Mill Diameter:
-					<input class="diameter" type="text" ng-model="millDiameter"/>
-				</div>
-				<div>
-					<input type="button" value="Run" ng-click="Mill1()"/>
-				</div>
-				<textarea id="gcodeTextArea" ng-model="gcode" rows="10"></textarea>
-				<div>
-					{{errorMessage}}
-				</div>
-			</div>
-			<div id="content" class="content">
-				<canvas id="canvas" class="" width="500" height="100"/>
-			</div>
-	</body>
+  <head>
+    <title>g-code simulator</title>
+    <link href="css/flex.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+    <script src="vendor/jquery-1.9.1.js"></script>
+    <script src="vendor/jquery-ui.js"></script>
+    <script src="vendor/angular.js"></script>
+    <script src="vendor/three-r58.js"></script>
+    <script src="vendor/OrbitControls.js"></script>
+    <script src="vendor/ThreeCSG.js"></script>
+    <script src="vendor/common.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/controller.js"></script>
+    <script src="js/init.js"></script>
+    <script type="text/javascript">$(init);</script>
+  </head>
+  <body ng-controller="ThreeJsCtrl" id="container" class="container">
+      <div id="left" class="left bg2">
+        <div class="diameter-part">
+          Mill Diameter:
+          <input class="diameter" type="text" ng-model="millDiameter"/>
+        </div>
+        <div>
+          <input type="button" value="Run" ng-click="Mill1()"/>
+        </div>
+        <textarea id="gcodeTextArea" ng-model="gcode" rows="10"></textarea>
+        <div>
+          {{errorMessage}}
+        </div>
+      </div>
+      <div id="content" class="content">
+        <canvas id="canvas" class="" width="500" height="100"/>
+      </div>
+  </body>
 </html>
 
