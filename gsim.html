@@ -18,9 +18,15 @@
   </head>
   <body ng-controller="ThreeJsCtrl" id="container" class="container">
       <div id="left" class="left bg2">
+          <div>Tool diameters:</div>
         <div class="diameter-part">
-          Mill Diameter:
-          <input class="diameter" type="text" ng-model="millDiameter"/>
+          <div>
+            <ol class="unstyled">
+    	        <li ng-repeat="tool in tools">
+    	          <input class="diameter" type="text" ng-model="tool.diameter"/>
+    	        </li>
+  	        </ol>
+          </div>
         </div>
         <div>
           <input type="button" value="Run" ng-click="Mill1()"/>

@@ -151,16 +151,23 @@ var scene = (function () {
   function trim1 (str) {
     return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
   }
+  
+  function floatParser(s) { return parseFloat(s); }
+  function intParser(s) { return parseInt(s); }
+  function stringParser(s) { return s; }
 
   // parse and execute g code line by line
   // supports only g0 and g1
-  function executeGCode(gcode, millDiameter) {
+  function executeGCode(gcode, tools) {
+	var ti = 1;
     reset();
-    var validStarts = "gxyzijkf";
+    var validPartStarts = "mgotxyzijkf";
+    var partValueParser =   [intParser, intParser, stringParser, intParser, floatParser, floatParser, floatParser, floatParser, floatParser, floatParser, floatParser];
     var prevPos = {x:0, y:0, z:0};
     var partVal = {};
     var lines = gcode.split('\n');
     for (var i in lines) {
+      delete partVal.m;
       var line = trim1(lines[i]);
       if (line.length > 0) {
         var parts = line.split(' ');
@@ -168,19 +175,27 @@ var scene = (function () {
           var part = parts[j];
           var partStart = part.charAt(0);
           var partRest = part.substr(1);
-          if (validStarts.indexOf(partStart) == -1) {
+          var partStartIndex = validPartStarts.indexOf(partStart);
+          if (partStartIndex == -1) {
             throw new SyntaxError("invalid g-code", i);
           }
-          partVal[partStart] = parseFloat(partRest);
+          partVal[partStart] = partValueParser[partStartIndex](partRest);
+        }
+        if (partVal.m == 6) {
+            if (partVal.t == undefined) {
+                throw new SyntaxError("missing t value for m6", i);
+            }
+            ti = partVal.t;
         }
         if (partVal.g == 0 || partVal.g == 1) {
           if (partVal.x == undefined || partVal.y == undefined || partVal.z == undefined) {
             throw new SyntaxError("missing x, y or z", i);
           }
           if (partVal.g == 1) {
+            var d = parseFloat(tools[ti - 1].diameter);
             millFromTo(
               new THREE.Vector3(prevPos.x, prevPos.z, prevPos.y), 
-              new THREE.Vector3(partVal.x, partVal.z, partVal.y),  millDiameter);
+              new THREE.Vector3(partVal.x, partVal.z, partVal.y),  d);
           }
           prevPos.x = partVal.x; 
           prevPos.y = partVal.y; 
@@ -240,8 +255,8 @@ var scene = (function () {
     },
 
     // mills the cgode using the specified mill
-    millGCode: function(gcode, millDiameter) {
-      executeGCode(gcode, millDiameter);
+    millGCode: function(gcode, tools) {
+      executeGCode(gcode, tools);
     },
 
     selectGCodeLine: function(lineNo) {
