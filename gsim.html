@@ -29,6 +29,10 @@
           </div>
         </div>
         <div>
+          <input type="button" value="Add" ng-click="addTool()"/>
+          <input type="button" value="Remove" ng-click="removeLastTool()"/>
+        </div>
+        <div>
           <input type="button" value="Run" ng-click="Mill1()"/>
         </div>
         <textarea id="gcodeTextArea" ng-model="gcode" rows="10"></textarea>
