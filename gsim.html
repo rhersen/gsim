@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="gsimApp">
   <head>
     <title>g-code simulator</title>
     <link href="css/flex.css" rel="stylesheet"/>
@@ -11,8 +11,11 @@
     <script src="vendor/OrbitControls.js"></script>
     <script src="vendor/ThreeCSG.js"></script>
     <script src="vendor/common.js"></script>
+    <script src="js/gsimApp.js"></script>
     <script src="js/scene.js"></script>
     <script src="js/controller.js"></script>
+    <script src="js/sortableControl.js"></script>
+    <script src="js/sortable.js"></script>
     <script src="js/init.js"></script>
     <script type="text/javascript">$(init);</script>
   </head>
@@ -21,16 +24,15 @@
           <div>Tool diameters:</div>
         <div class="diameter-part">
           <div>
-            <ol class="unstyled">
-    	        <li ng-repeat="tool in tools">
-    	          <input class="diameter" type="text" ng-model="tool.diameter"/>
-    	        </li>
-  	        </ol>
+            <ul id="tools" sortable ng-model="tools">
+              <li ng-repeat="tool in tools">
+                {{tools.indexOf(tool) + 1}} <input class="diameter" type="text" ng-model="tool.diameter"/> <span ng-click="deleteTool(tool)">-</span>
+              </li>
+  	        </ul>
           </div>
         </div>
-        <div>
-          <input type="button" value="Add" ng-click="addTool()"/>
-          <input type="button" value="Remove" ng-click="removeLastTool()"/>
+        <div class="hcenter">
+          <input type="button" value="+" ng-click="addTool()"/>
         </div>
         <div>
           <input type="button" value="Run" ng-click="Mill1()"/>

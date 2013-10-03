@@ -9,11 +9,17 @@ function ThreeJsCtrl($scope) {
 		$scope.tools.push({diameter: 30});
 	}
 
-	$scope.removeLastTool = function() {
-		if ($scope.tools.length > 0) {
-			$scope.tools = $scope.tools.slice(0, -1);
-		}
-	}
+    $scope.deleteTool = function(tool) {
+      var i = $scope.tools.indexOf(tool);
+      $scope.tools.splice(i, 1);
+      $scope.$apply();
+  }
+
+    $scope.removeLastTool = function() {
+      if ($scope.tools.length > 0) {
+          $scope.tools = $scope.tools.slice(0, -1);
+      }
+  }
 
 	$scope.Mill1 = function() {
 		try {
@@ -32,6 +38,7 @@ function ThreeJsCtrl($scope) {
 			}
 		}
 	}
+	
 }
 
 
