@@ -6,7 +6,7 @@ function ThreeJsCtrl($scope) {
 	$scope.errorMessage = "";
 	
 	$scope.addTool = function() {
-		$scope.tools.push({diameter: 30});
+		$scope.tools.push({diameter: ""});
 	}
 
     $scope.deleteTool = function(tool) {

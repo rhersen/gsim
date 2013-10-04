@@ -14,7 +14,6 @@
     <script src="js/gsimApp.js"></script>
     <script src="js/scene.js"></script>
     <script src="js/controller.js"></script>
-    <script src="js/sortableControl.js"></script>
     <script src="js/sortable.js"></script>
     <script src="js/init.js"></script>
     <script type="text/javascript">$(init);</script>
@@ -26,13 +25,18 @@
           <div>
             <ul id="tools" sortable ng-model="tools">
               <li ng-repeat="tool in tools">
-                {{tools.indexOf(tool) + 1}} <input class="diameter" type="text" ng-model="tool.diameter"/> <span ng-click="deleteTool(tool)">-</span>
+                <ng-form name="toolForm">
+                  <span title="Drag to reorder">{{tools.indexOf(tool) + 1}}</span>
+                  <input name="diameter" class="diameter invalid-{{toolForm.diameter.$error.pattern || toolForm.diameter.$error.required}}" 
+                    ng-model="tool.diameter" ng-pattern="/^\d*(\.\d*)?$/" required/>
+                  <span ng-click="deleteTool(tool)" title="Remove">-</span>
+                </ng-form>
               </li>
   	        </ul>
           </div>
         </div>
         <div class="hcenter">
-          <input type="button" value="+" ng-click="addTool()"/>
+          <input type="button" value="+" ng-click="addTool()" title="Add tool"/>
         </div>
         <div>
           <input type="button" value="Run" ng-click="Mill1()"/>
