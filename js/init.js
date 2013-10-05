@@ -23,9 +23,8 @@ function init() {
 
   jQuery(document).ready(function(){
     $('.expandable .head').click(function() {
-        $(this).next().toggle('slow');
+        $(this).next().toggle('fast');
         return false;
     });
   });
 }
-

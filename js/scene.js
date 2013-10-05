@@ -162,7 +162,7 @@ var scene = (function () {
   function stringParser(s) { return s; }
 
   // parse and execute g code line by line
-  // supports only g0 and g1
+  // supports g0, g1 and m6
   function executeGCode(gcode, tools) {
 	var ti = 1;
     reset();

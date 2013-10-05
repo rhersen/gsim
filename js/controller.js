@@ -12,6 +12,8 @@ function ThreeJsCtrl($scope) {
 	
 	$scope.addTool = function() {
 		$scope.tools.push({diameter: ""});
+		$scope.$apply();
+		$( "#tools" ).find( "input" ).focus();
 	}
 
     $scope.deleteTool = function(tool) {
