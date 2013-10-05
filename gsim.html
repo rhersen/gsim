@@ -21,6 +21,21 @@
   <body ng-controller="ThreeJsCtrl" id="container" class="container">
       <div id="left" class="left bg2">
         <div class="expandable">
+          <h3 class="head">Workpiece</h3>
+          <div>
+            <ng-form  id="workpiece" name="workpieceForm">
+              <table>
+                <tr><td>Width</td><td><input name="width" class="invalid-{{workpieceForm.width.$error.pattern || toolForm.diameter.$error.required}}" 
+                        ng-model="workpiece.width" ng-change="setWorkpieceSize()" ng-pattern="/^\d*(\.\d*)?$/" required/></td><td>{{unit}}</td></tr>
+                <tr><td>Height</td><td><input name="height" class="invalid-{{workpieceForm.height.$error.pattern || workpieceForm.height.$error.required}}" 
+                        ng-model="workpiece.height" ng-change="setWorkpieceSize()" ng-pattern="/^\d*(\.\d*)?$/" required/></td><td>{{unit}}</td></tr>
+                <tr><td>Depth</td><td><input name="width" class="invalid-{{workpieceForm.depth.$error.pattern || workpieceForm.depth.$error.required}}" 
+                        ng-model="workpiece.depth" ng-change="setWorkpieceSize()" ng-pattern="/^\d*(\.\d*)?$/" required/></td><td>{{unit}}</td></tr>
+              </table>
+            </ng-form>
+          </div>
+        </div>
+        <div class="expandable">
           <h3 class="head">Tools</h3>
           <div>
             <ul id="tools" sortable ng-model="tools">
@@ -28,7 +43,7 @@
                 <ng-form name="toolForm">
                   <span title="Drag to reorder">{{tools.indexOf(tool) + 1}}</span>
                   <input name="diameter" class="diameter invalid-{{toolForm.diameter.$error.pattern || toolForm.diameter.$error.required}}" 
-                    ng-model="tool.diameter" ng-pattern="/^\d*(\.\d*)?$/" required/>
+                    ng-model="tool.diameter" ng-pattern="/^\d*(\.\d*)?$/" required/>{{unit}}
                   <span class="button-char" ng-click="deleteTool(tool)" title="Remove">-</span>
                 </ng-form>
               </li>

@@ -6,7 +6,7 @@ var scene = (function () {
   var changed = false;
   var controller;
   var workpiece;
-  var workpieceWidth = 300, workpieceHeight = 100, workpieceDepth = 200;
+  var workpieceSize;
   var top;
   var material = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
   var millMaterial = new THREE.MeshLambertMaterial({color: 0xff0000});
@@ -32,10 +32,7 @@ var scene = (function () {
     pointLight.position.z = 130;
     scene.add(pointLight);
 
-    var workpiecegeometry = new THREE.CubeGeometry(workpieceWidth, workpieceHeight, workpieceDepth);
-    initialWorkpiece = new THREE.Mesh(workpiecegeometry, material);
-    workpiecegeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -workpieceHeight / 2, 0));  // set top of wp at 0
-    initialWorkpiece.geometry.computeBoundingBox();
+    setInitialWorkpiece({width: 300, height: 100, depth: 200});
     top = 0.0;
     workpiece = initialWorkpiece;
     scene.add(workpiece);
@@ -46,14 +43,13 @@ var scene = (function () {
 
     canvasSizeChanged();
   }
-
-  // call this when canvas size have changed
-  function canvasSizeChanged() {
-    var w = canvasEl.clientWidth, h = canvasEl.clientHeight;
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    changed = true;
+  
+  function setInitialWorkpiece(size) {
+    workpieceSize = size;
+    var workpiecegeometry = new THREE.CubeGeometry(size.width, size.height, size.depth);
+    initialWorkpiece = new THREE.Mesh(workpiecegeometry, material);
+    workpiecegeometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -workpieceSize.height / 2, 0));  // set top of wp at 0
+    initialWorkpiece.geometry.computeBoundingBox();
   }
 
   // restore the original workpiece
@@ -63,6 +59,15 @@ var scene = (function () {
     scene.add(workpiece);
   }
 
+  // call this when canvas size have changed
+  function canvasSizeChanged() {
+    var w = canvasEl.clientWidth, h = canvasEl.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    changed = true;
+  }
+  
   // start paintloop
   function paint() {
     requestAnimationFrame(paint);
@@ -252,6 +257,12 @@ var scene = (function () {
 
     setSizes: function() {
       canvasSizeChanged();
+    },
+    
+    setWorkpieceSize: function(size) {
+      setInitialWorkpiece(size);
+      reset();
+      changed = true;
     },
 
     // mills the cgode using the specified mill

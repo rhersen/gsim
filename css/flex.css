@@ -3,10 +3,22 @@
   background-color: #a0e0a0;
   padding: .1em .25em 0em .25em;
   border-radius: .5em;
+  margin-bottom: .5em;
 }
 
 .expandable .head {
-  margin: .2em;
+  margin: .1em inherit 0em inherit;
+}
+
+/* workpiece */
+#workpiece table {
+  width: 100%;
+}
+
+#workpiece table input {
+  text-align: right;
+  flex: 1;
+  width: 100%;
 }
 
 /* tools */
@@ -41,13 +53,13 @@ div.hcenter {
   cursor: crosshair;
   font-size: 150%;
   font-style: bold;
+  margin-left: .3em;
 }
 
 input.diameter {
   text-align: right;
   flex: 1;
   margin-left: 0.5em;
-  margin-right: 0.4em;
 }
 
 
@@ -58,7 +70,7 @@ body {
 }
 
 div.left {
-  width: 20em;
+  width: 10em;
   margin-right: 10px;
   padding: 1em;
   background-color: #c0ffc0;
