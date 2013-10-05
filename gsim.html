@@ -53,12 +53,14 @@
             </div>
           </div>
         </div>
-        <div>
-          <input type="button" value="Run" ng-click="Mill1()"/>
-        </div>
-        <textarea id="gcodeTextArea" ng-model="gcode" rows="10"></textarea>
-        <div>
-          {{errorMessage}}
+        <div class="expandable">
+          <div class="execution">
+            <input type="button" value="Run" ng-click="Mill1()"/>
+          </div>
+          <textarea id="gcodeTextArea" ng-model="gcode" rows="10"></textarea>
+          <div>
+            {{errorMessage}}
+          </div>
         </div>
       </div>
       <div id="content" class="content">

@@ -72,13 +72,17 @@ body {
 div.left {
   width: 10em;
   margin-right: 10px;
-  padding: 1em;
+  padding: .5em;
   background-color: #c0ffc0;
+}
+
+.execution {
+  margin-top: .15em;
 }
 
 textarea {
   width: 100%;
-  resize: none;
+  height: 20em;
   box-sizing: border-box;
   margin-left: 2px;
   -moz-box-sizing: border-box;
