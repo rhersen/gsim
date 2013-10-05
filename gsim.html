@@ -20,8 +20,8 @@
   </head>
   <body ng-controller="ThreeJsCtrl" id="container" class="container">
       <div id="left" class="left bg2">
-          <div>Tool diameters:</div>
-        <div class="diameter-part">
+        <div class="expandable">
+          <h3 class="head">Tools</h3>
           <div>
             <ul id="tools" sortable ng-model="tools">
               <li ng-repeat="tool in tools">
@@ -29,14 +29,14 @@
                   <span title="Drag to reorder">{{tools.indexOf(tool) + 1}}</span>
                   <input name="diameter" class="diameter invalid-{{toolForm.diameter.$error.pattern || toolForm.diameter.$error.required}}" 
                     ng-model="tool.diameter" ng-pattern="/^\d*(\.\d*)?$/" required/>
-                  <span ng-click="deleteTool(tool)" title="Remove">-</span>
+                  <span class="button-char" ng-click="deleteTool(tool)" title="Remove">-</span>
                 </ng-form>
               </li>
-  	        </ul>
+            </ul>
+            <div class="hcenter">
+              <span class="button-char" ng-click="addTool()" title="Add tool">+</span>
+            </div>
           </div>
-        </div>
-        <div class="hcenter">
-          <input type="button" value="+" ng-click="addTool()" title="Add tool"/>
         </div>
         <div>
           <input type="button" value="Run" ng-click="Mill1()"/>

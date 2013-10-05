@@ -20,4 +20,12 @@ function init() {
     minWidth: '50',
     maxWidth: '350'
   });
+
+  jQuery(document).ready(function(){
+    $('.expandable .head').click(function() {
+        $(this).next().toggle('slow');
+        return false;
+    });
+  });
 }
+

@@ -1,10 +1,20 @@
+/* expandable */
+.expandable {
+  background-color: #a0e0a0;
+  padding: .1em .25em 0em .25em;
+  border-radius: .5em;
+}
+
+.expandable .head {
+  margin: .2em;
+}
+
+/* tools */
 #tools {
   display: flex;
   flex-flow: column nowrap;
-  padding: 5px;
-  border: 1px solid #999;
-  background: #eee;
-  margin: 0px -2px 0px 2px;
+  padding: 0px;
+  margin: 0px 2px 0px 2px;
   list-style-type: none;
 }
 
@@ -23,9 +33,11 @@ input.invalid-true {
 
 div.hcenter {
   text-align:center;
+  margin: -.35em inherit -1.8em inherit;
+  padding: 0;
 }
 
-#tools li ng-form span:last-child {
+.button-char {
   cursor: crosshair;
   font-size: 150%;
   font-style: bold;
@@ -37,6 +49,7 @@ input.diameter {
   margin-left: 0.5em;
   margin-right: 0.4em;
 }
+
 
 body {
   display: flex;

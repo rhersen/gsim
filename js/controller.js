@@ -1,7 +1,6 @@
 function ThreeJsCtrl($scope) {
-	$scope.tools = [
-	    {diameter: 10},
-	    {diameter: 20}];
+    $scope.workpiece = {width: 300, height: 100, depth: 200};
+	$scope.tools = [{diameter: 10}, {diameter: 20}];
 	$scope.gcode = "g0 x0 y0 z10\nm6 t2\ng1 z-10\nx30\ny30\nx0\ny0\nm6 t1\ng1 z-110\nx30\ny30\nx0\ny0";
 	$scope.errorMessage = "";
 	
