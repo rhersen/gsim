@@ -23,7 +23,7 @@ function init() {
 
   jQuery(document).ready(function(){
     $('.expandable .head').click(function() {
-        $(this).next().toggle('fast');
+        $(this).next().toggle('slow');
         return false;
     });
   });

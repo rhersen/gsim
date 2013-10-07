@@ -83,6 +83,7 @@ div.left {
 textarea {
   width: 100%;
   height: 20em;
+  resize: vertical;
   box-sizing: border-box;
   margin-left: 2px;
   -moz-box-sizing: border-box;
