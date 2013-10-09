@@ -56,7 +56,9 @@
         </div>
         <div class="expandable">
           <div class="execution">
-            <input type="button" value="Run" ng-click="Mill1()"/>
+            <input type="button" value="Run" ng-click="run()"/>
+            <input type="button" value="Step" ng-click="step()"/>
+            <input type="button" value="Stop" ng-click="stop()"/>
           </div>
           <textarea id="gcodeTextArea" ng-model="gcode" rows="10"></textarea>
           <div>
@@ -65,7 +67,7 @@
         </div>
       </div>
       <div id="content" class="content">
-        <canvas id="canvas" class="" width="500" height="100"/>
+        <canvas three-canvas id="canvas" class="" width="500" height="100"></canvas>
       </div>
   </body>
 </html>

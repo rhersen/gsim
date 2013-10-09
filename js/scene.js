@@ -1,4 +1,4 @@
-var scene = (function () {
+function Scene() {
   // keeps a WebGL renderer on a canvas
   var renderer;
   var scene = new THREE.Scene();
@@ -57,6 +57,7 @@ var scene = (function () {
     scene.remove(workpiece);
     workpiece = initialWorkpiece;
     scene.add(workpiece);
+    changed = true;
   }
 
   // call this when canvas size have changed
@@ -153,45 +154,6 @@ var scene = (function () {
     return shape;
   }
 
-  function selectTextareaLine(tarea,lineNum) {
-    var lines = tarea.value.split("\n");
-
-    // calculate start/end
-    var startPos = 0;
-    for(var x = 0; x < lines.length; x++) {
-      if(x == lineNum) {
-          break;
-      }
-      startPos += (lines[x].length+1);
-    }
-
-    var endPos = lines[lineNum].length+startPos;
-
-    // do selection
-    
-    // Chrome / Firefox
-    if(typeof(tarea.selectionStart) != "undefined") {
-      tarea.focus();
-      tarea.selectionStart = startPos;
-      tarea.selectionEnd = endPos;
-      return true;
-    }
-
-    // IE
-    if (document.selection && document.selection.createRange) {
-      tarea.focus();
-      tarea.select();
-      var range = document.selection.createRange();
-      range.collapse(true);
-      range.moveEnd("character", endPos);
-      range.moveStart("character", startPos);
-      range.select();
-      return true;
-    }
-
-    return false;
-  }
-
   return {
     init: function (canvasEl) {
       setup(canvasEl);
@@ -207,28 +169,27 @@ var scene = (function () {
       reset();
       changed = true;
     },
+    
+//    *** make GCodeInterpreter a service (define a factory in module)
 
     // mills the cgode using the specified mill
-    millGCode: function(gcode, tools) {
-      var gci = GCodeInterpreter({
-        millFromTo: function(from, to, ti) {
-          var d = parseFloat(tools[ti - 1].diameter);
+    getMachine: function() {
+      return {
+        millFromTo: function(from, to, tool) {
+          var d = parseFloat(tool.diameter);
           millFromTo(
-            new THREE.Vector3(from.x, from.z, from.y), 
+            new THREE.Vector3(from.x, from.z, from.y),
             new THREE.Vector3(to.x, to.z, to.y),  d);
         },
         
         reset: function() {
           reset();
         }
-      });
-      gci.setGCode(gcode);
-      gci.setTools(tools);
-      gci.run();
+      }
     },
 
     selectGCodeLine: function(lineNo) {
       selectTextareaLine(document.getElementById('gcodeTextArea'), lineNo);
     }
   }
-})();
+}
