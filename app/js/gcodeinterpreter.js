@@ -75,6 +75,7 @@ function GCodeInterpreter(millingMachine) {
       state = STATES.STOPPED;
       gCode = newGCode;
       gCodeLines = gCode.split('\n');
+      console.log(gCodeLines);
       curGCodeLine = 0;
     },
     
