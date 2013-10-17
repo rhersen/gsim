@@ -1,10 +1,15 @@
 describe('gcodeinterpreter', function() {
   var subject;
-  var millingMachine = {reset: function() {
-  }};
+  var millingMachine = {
+    reset: function() {
+    },
+    millFromTo: function() {
+    }
+  };
 
   beforeEach(function() {
     subject = GCodeInterpreter(millingMachine);
+    subject.setTools([1, 2, 3]);
   });
 
   it('returns an object', function() {
@@ -28,10 +33,59 @@ describe('gcodeinterpreter', function() {
   });
 
   describe('.run', function() {
+    beforeEach(function() {
+      spyOn(millingMachine, 'millFromTo');
+    });
+
     it('stops after running', function() {
       subject.run();
       var result = subject.isStopped();
       expect(result).toEqual(true);
+    });
+
+    it('throws if start char is not valid', function() {
+      subject.setGCode('r');
+
+      try {
+        subject.run();
+        this.fail(Error('expected exception'));
+      } catch (e) {
+        expect(e).toMatch(/invalid/i);
+      }
+    });
+
+    it('handles g1', function() {
+      subject.setGCode('g0 x0 y0 z10\nm6 t2\ng1 x-4 y-8 z-10');
+      subject.run();
+      expect(millingMachine.millFromTo).toHaveBeenCalledWith({ x: -4, y: -8, z: -10 }, { g: 1, x: -4, y: -8, z: -10, t: 2 }, 2);
+    });
+
+    it('trims input lines', function() {
+      subject.setGCode(' g0 x0 y0 z10\t\n m6 t2 \n\n g1 x-4 y-8 z-10 ');
+      subject.run();
+      expect(millingMachine.millFromTo).toHaveBeenCalledWith({ x: -4, y: -8, z: -10 }, { g: 1, x: -4, y: -8, z: -10, t: 2 }, 2);
+    });
+
+    it('throws if m6 has no t', function() {
+      subject.setGCode('g0 x0 y0 z10\nm6');
+
+      try {
+        subject.run();
+        this.fail(Error('expected exception'));
+      } catch (e) {
+        expect(e).toMatch(/missing t/i);
+      }
+    });
+
+    it('throws if g has no y', function() {
+      subject.setGCode('g0 x0 z10');
+
+      try {
+        subject.run();
+        this.fail(Error('expected exception'));
+      } catch (e) {
+        expect(e).toMatch(/missing x, y/i);
+      }
     });
   });
 
@@ -76,6 +130,11 @@ describe('gcodeinterpreter', function() {
           subject.setGCode('');
         });
 
+        it('sets current line to zero', function() {
+          var result = subject.getCurrentLine();
+          expect(result).toEqual(0);
+        });
+
         it('stops', function() {
           var result = subject.isStopped();
           expect(result).toEqual(true);
@@ -97,7 +156,7 @@ describe('gcodeinterpreter', function() {
             subject.step();
           });
 
-          it('resets line number', function() {
+          it('increments line number', function() {
             var result = subject.getCurrentLine();
             expect(result).toEqual(1);
           });
@@ -107,8 +166,11 @@ describe('gcodeinterpreter', function() {
   });
 
   describe('.setGCode', function() {
-    it('sets current line to zero', function() {
+    beforeEach(function() {
       subject.setGCode('');
+    });
+
+    it('sets current line to zero', function() {
       var result = subject.getCurrentLine();
       expect(result).toEqual(0);
     });
